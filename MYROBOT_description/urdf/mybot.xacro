@@ -1,0 +1,104 @@
+<?xml version='1.0'?>
+
+<robot name="myrobot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+  <xacro:property name="link1_length" value="1.5"/>
+  <!-- <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
+  <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find mybot_description)/urdf/macros.xacro" /> -->
+
+<link name="world"/>
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="link1"/>
+  </joint> 
+  <!-- Base Link -->
+  <link name="link1">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.1 0.1 2"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <geometry>
+        <box size="0.1 0.1 ${link1_length}"/>
+      </geometry>
+     <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <joint name="joint1" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin rpy="0 0 0" xyz="0 0.1 1.0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>  
+  <!-- Middle Link -->
+  <link name="link2">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 1.57 0" xyz="0.2 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.2 0.0 0.0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link> 
+  <joint name="joint2" type="continuous">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin rpy="0 0 0" xyz="0 0.1 0.9"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint> 
+  <!-- Top Link -->
+  <link name="link3">
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <box size="0.1 0.1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <geometry>
+        <!-- <box size="0.1 0.1 1"/> -->
+       <mesh filename="package://MYROBOT_description/meshes/upper_arm.dae"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0.45"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link> 
+ 
+ <!-- setting material of robot link -->
+ <gazebo reference="link1">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+</robot>
+
