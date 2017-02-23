@@ -1,0 +1,8 @@
+<launch>
+
+  
+  <node name="chatter" pkg="beginner_tutorials" type="talker.py"
+    respawn="false" output="screen">
+  </node>
+
+</launch>

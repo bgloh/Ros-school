@@ -4,107 +4,199 @@
 
   <xacro:property name="cameraSize" value="0.05"/>
   <xacro:property name="cameraMass" value="0.1"/>
+  <xacro:property name="mass" value="1"/>
+  <xacro:property name="width" value="0.1" /> <!-- Link 1 -->
+   <xacro:property name="height1" value="1" /> <!-- Link 1 -->
+  <xacro:property name="height2" value="0.5" /> <!-- Link 2 -->
+  <xacro:property name="height3" value="0.3" /> <!-- Link 3 -->
+  <xacro:property name="camera_link" value="0.05" /> <!-- Size of square 'camera' box -->
+  <xacro:property name="axel_offset" value="0.05" /> <!-- Space btw top of beam and the each joint -->
   <xacro:property name="link1_length" value="1.5"/>
-  <!-- <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
-  <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
+
+  <xacro:include filename="$(find MYROBOT_description)/urdf/mybot.gazebo" />
+  <!--<xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
   <xacro:include filename="$(find mybot_description)/urdf/macros.xacro" /> -->
-  <gazebo>
+  <!--<gazebo>
   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
     <robotNamespace>/myrobot</robotNamespace>
     <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
   </plugin>
-</gazebo>
+</gazebo> -->
 
 <link name="world"/>
   <joint name="fixed" type="fixed">
     <parent link="world"/>
     <child link="link1"/>
   </joint> 
-  <!-- Base Link -->
+ <!-- Base Link -->
   <link name="link1">
     <collision>
-      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1 0.1 2"/>
+  <box size="${width} ${width} ${height1}"/>
       </geometry>
     </collision>
+
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 1.0"/>
+      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
       <geometry>
-        <box size="0.1 0.1 ${link1_length}"/>
-      </geometry>
-     <material name="blue">
-        <color rgba="0 0 .8 1"/>
-      </material>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0 0 1.0"/>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link>
-  <joint name="joint1" type="continuous">
-    <parent link="link1"/>
-    <child link="link2"/>
-    <origin rpy="0 0 0" xyz="0 0.1 1.0"/>
-    <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
-  </joint>  
-  <!-- Middle Link -->
-  <link name="link2">
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.45"/>
-      <geometry>
-        <box size="0.1 0.1 1"/>
-      </geometry>
-    </collision>
-    <visual>
-      <origin rpy="0 1.57 0" xyz="0.2 0 0"/>
-      <geometry>
-        <box size="0.1 0.1 1"/>
-      </geometry>
-      <material name="black"/>
-    </visual>
-    <inertial>
-      <origin rpy="0 0 0" xyz="0.2 0.0 0.0"/>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
-    </inertial>
-  </link> 
-  <joint name="joint2" type="continuous">
-    <parent link="link2"/>
-    <child link="link3"/>
-    <origin rpy="0 0 0" xyz="0 0.1 0.9"/>
-    <axis xyz="0 1 0"/>
-    <dynamics damping="0.7"/>
-  </joint> 
-  <!-- Top Link -->
-  <link name="link3">
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.45"/>
-      <geometry>
-        <box size="0.1 0.1 1"/>
-      </geometry>
-    </collision>
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0.45"/>
-      <geometry>
-        <!-- <box size="0.1 0.1 1"/> -->
-       <mesh filename="package://MYROBOT_description/meshes/upper_arm.dae"/>
+  <box size="${width} ${width} ${height1}"/>
       </geometry>
       <material name="orange"/>
     </visual>
+
     <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0.45"/>
-      <mass value="1"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+      <origin xyz="0 0 ${height1/2}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+    ixx="${mass / 12.0 * (width*width + height1*height1)}" ixy="0.0" ixz="0.0"
+    iyy="${mass / 12.0 * (height1*height1 + width*width)}" iyz="0.0"
+    izz="${mass / 12.0 * (width*width + width*width)}"/>
     </inertial>
-  </link> 
+  </link>
+
+  <joint name="joint1" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0 ${width} ${height1 - axel_offset}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <!-- Middle Link -->
+  <link name="link2">
+    <collision>
+      <origin xyz="0 0 ${height2/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+  <box size="${width} ${width} ${height2}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${height2/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+  <box size="${width} ${width} ${height2}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${height2/2 - axel_offset}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+    ixx="${mass / 12.0 * (width*width + height2*height2)}" ixy="0.0" ixz="0.0"
+    iyy="${mass / 12.0 * (height2*height2 + width*width)}" iyz="0.0"
+    izz="${mass / 12.0 * (width*width + width*width)}"/>
+    </inertial>
+  </link>
+
+  <joint name="joint2" type="continuous">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0 ${width} ${height2 - axel_offset*2}" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+
+  <!-- Top Link -->
+  <link name="link3">
+    <collision>
+      <origin xyz="0 0 ${height3/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+  <box size="${width} ${width} ${height3}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${height3/2 - axel_offset}" rpy="0 0 0"/>
+      <geometry>
+  <box size="${width} ${width} ${height3}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${height3/2 - axel_offset}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+    ixx="${mass / 12.0 * (width*width + height3*height3)}" ixy="0.0" ixz="0.0"
+    iyy="${mass / 12.0 * (height3*height3 + width*width)}" iyz="0.0"
+    izz="${mass / 12.0 * (width*width + width*width)}"/>
+    </inertial>
+  </link>
+
+  <!-- Camera -->
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="${camera_link} 0 ${height3 - axel_offset*2}" rpy="0 0 0"/>
+    <parent link="link3"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <!-- Camera -->
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+ 
+ <!-- Hokuyo Laser -->
+<joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 ${height3 - axel_offset/2}" rpy="0 0 0"/>
+    <parent link="link3"/>
+    <child link="hokuyo_link"/>
+  </joint>
+
+  <link name="hokuyo_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+  <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://MYROBOT_description/meshes/hokuyo.dae"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
  
  <!-- setting material of robot link -->
- <gazebo reference="link1">
+ <!--<gazebo reference="link1">
     <material>Gazebo/Orange</material>
   </gazebo>
+  <gazebo reference="link2">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <gazebo reference="camera_link">
+    <material>Gazebo/Red</material>
+  </gazebo> -->
 
 <!-- transmission -->
 <transmission name="tran1">
